@@ -12,7 +12,7 @@
 
 
 ## 📜 News
-- **2026.02.1o**: This repo is created.
+- **2026.02.10**: This repo is created.
 
 ## 🚀 Method Overview
 <div align="center">
