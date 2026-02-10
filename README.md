@@ -31,7 +31,7 @@ and then employs a sparse self-attention mechanism to adaptively select the most
 
 
 ## 🚀 Quick Started
-### 1. Environment Set Up
+<!-- ### 1. Environment Set Up
 > - Python 3.8, PyTorch >= 1.11
 > - BasicSR 1.4.2
 > - Platforms: Ubuntu 18.04, cuda-11
@@ -64,7 +64,7 @@ Please download the test dataset from [Baidu Cloud](https://pan.baidu.com/s/1v7-
 ```
 python basicsr/test.py -opt options/test/test_RDG_x4.yml
 ```
-- The test results will be in './results'.
+- The test results will be in './results'. -->
 
 
 ## ✨ Results
