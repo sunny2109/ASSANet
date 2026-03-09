@@ -1,0 +1,152 @@
+# general settings
+name: ASSANet_160C8G8B_x4_FFT_b16_p72_DF2K
+model_type: SRModel
+scale: 4
+num_gpu: auto
+manual_seed: 0
+
+# dataset and data loader settings
+datasets:
+  train:
+    name: DF2K
+    type: PairedImageDataset
+    dataroot_gt: /data0/SISR_dataset/DF2K/DF2K_train_HR_sub
+    dataroot_lq: /data0/SISR_dataset/DF2K/DF2K_train_LR_bicubic/X4_sub
+    meta_info_file: basicsr/data/meta_info/meta_info_DF2K_sub_GT.txt
+    filename_tmpl: '{}'
+    io_backend:
+      type: disk
+
+    gt_size: 288
+    use_hflip: true
+    use_rot: true
+
+    # data loader
+    use_shuffle: true
+    num_worker_per_gpu: 6
+    batch_size_per_gpu: 2
+    dataset_enlarge_ratio: 1
+    prefetch_mode: ~
+
+  # --- validation
+  val_1:
+    name: Set5
+    type: PairedImageDataset
+    dataroot_gt: /data0/SISR_dataset/Benchmarks/Set5/HR
+    dataroot_lq: /data0/SISR_dataset/Benchmarks/Set5/LR_bicubic/X4
+    filename_tmpl: '{}x4'
+    io_backend:
+      type: disk
+
+  val_2:
+    name: Set14
+    type: PairedImageDataset
+    dataroot_gt: /data0/SISR_dataset/Benchmarks/Set14/HR
+    dataroot_lq: /data0/SISR_dataset/Benchmarks/Set14/LR_bicubic/X4
+    filename_tmpl: '{}x4'
+    io_backend:
+      type: disk
+
+  val_3:
+    name: B100
+    type: PairedImageDataset
+    dataroot_gt: /data0/SISR_dataset/Benchmarks/B100/HR
+    dataroot_lq: /data0/SISR_dataset/Benchmarks/B100/LR_bicubic/X4
+    filename_tmpl: '{}x4'
+    io_backend:
+      type: disk
+
+  val_4:
+    name: Urban100
+    type: PairedImageDataset
+    dataroot_gt: /data0/SISR_dataset/Benchmarks/Urban100/HR
+    dataroot_lq: /data0/SISR_dataset/Benchmarks/Urban100/LR_bicubic/X4
+    filename_tmpl: '{}x4'
+    io_backend:
+      type: disk
+
+  val_5:
+    name: Manga109
+    type: PairedImageDataset
+    dataroot_gt: /data0/SISR_dataset/Benchmarks/Manga109/HR
+    dataroot_lq: /data0/SISR_dataset/Benchmarks/Manga109/LR_bicubic/X4
+    filename_tmpl: '{}x4'
+    io_backend:
+      type: disk
+
+
+# network structures
+network_g:
+  type: ASSANet
+  dim: 160
+  num_blocks: 8
+  num_layers: 8
+  upscale: 4
+  num_heads: 1
+  ffn_expansion_factor: 2.0
+  img_range: 1.
+  use_pixelunshuffle: False
+  tlc_flag: True
+  tlc_kernel: 72
+  activation: 'relu'
+
+# path
+path:
+  pretrain_network_g:
+  strict_load_g: true
+  resume_state: ~
+
+# all the training settings are based on SwinIR except for learning rate
+# training settings
+train:
+  ema_decay: 0.999
+  optim_g:
+    type: Adam
+    lr: !!float 5e-4
+    weight_decay: 0
+    betas: [0.9, 0.99]
+
+  scheduler:
+    type: MultiStepLR
+    milestones: [250000, 400000, 450000, 475000]
+    gamma: 0.5
+
+  total_iter: 500000
+  warmup_iter: -1  # no warm up
+
+  # losses
+  pixel_opt:
+    type: L1Loss
+    loss_weight: 1.0
+    reduction: mean
+
+  fft_opt:
+    type: FFTLoss
+    loss_weight: 0.05
+    reduction: mean
+
+# validation settings
+val:
+  val_freq: !!float 1e4
+  save_img: false
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 4
+      test_y_channel: true
+    ssim:
+      type: calculate_ssim
+      crop_border: 4
+      test_y_channel: true
+
+# logging settings
+logger:
+  print_freq: 500
+  save_checkpoint_freq: !!float 1e4
+  use_tb_logger: true
+
+# dist training settings
+dist_params:
+  backend: nccl
+  port: 29500

@@ -1,0 +1,95 @@
+# general settings
+name: test_ASSANet_x2_B
+model_type: SRModel
+scale: 2
+num_gpu: auto
+manual_seed: 0
+
+# dataset and data loader settings
+datasets:
+  val_1:
+    name: Set5
+    type: PairedImageDataset
+    dataroot_gt: /data0/SISR_dataset/Benchmarks/Set5/HR
+    dataroot_lq: /data0/SISR_dataset/Benchmarks/Set5/LR_bicubic/X2
+    filename_tmpl: '{}x2'
+    io_backend:
+      type: disk
+
+  val_2:
+    name: Set14
+    type: PairedImageDataset
+    dataroot_gt: /data0/SISR_dataset/Benchmarks/Set14/HR
+    dataroot_lq: /data0/SISR_dataset/Benchmarks/Set14/LR_bicubic/X2
+    filename_tmpl: '{}x2'
+    io_backend:
+      type: disk
+
+  val_3:
+    name: B100
+    type: PairedImageDataset
+    dataroot_gt: /data0/SISR_dataset/Benchmarks/B100/HR
+    dataroot_lq: /data0/SISR_dataset/Benchmarks/B100/LR_bicubic/X2
+    filename_tmpl: '{}x2'
+    io_backend:
+      type: disk
+
+  val_4:
+    name: Urban100
+    type: PairedImageDataset
+    dataroot_gt: /data0/SISR_dataset/Benchmarks/Urban100/HR
+    dataroot_lq: /data0/SISR_dataset/Benchmarks/Urban100/LR_bicubic/X2
+    filename_tmpl: '{}x2'
+    io_backend:
+      type: disk
+
+  val_5:
+    name: Manga109
+    type: PairedImageDataset
+    dataroot_gt: /data0/SISR_dataset/Benchmarks/Manga109/HR
+    dataroot_lq: /data0/SISR_dataset/Benchmarks/Manga109/LR_bicubic/X2
+    filename_tmpl: '{}x2'
+    io_backend:
+      type: disk
+
+
+# network structures
+network_g:
+  type: ASSANet
+  dim: 90
+  num_blocks: 4
+  num_layers: 8
+  upscale: 2
+  num_heads: 1
+  ffn_expansion_factor: 2.0
+  img_range: 1.
+  use_pixelunshuffle: False
+  tlc_flag: True
+  tlc_kernel: 96
+  activation: 'relu'
+
+# path
+path:
+  pretrain_network_g: experiments/pretrained_models/SR/ASSANet_B/ASSANet_B_x2.pth
+  strict_load_g: true
+  resume_state: ~
+
+# validation settings
+val:
+  save_img: false
+  suffix: ~  # add suffix to saved images, if None, use exp name
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 4
+      test_y_channel: true
+    ssim:
+      type: calculate_ssim
+      crop_border: 4
+      test_y_channel: true
+
+# dist training settings
+dist_params:
+  backend: nccl
+  port: 22144

@@ -1,6 +1,6 @@
 ## 📖 Adaptive Sparse Self-Attention for Efficient Image Super-resolution and Beyond
 
-[![Hugging Face Models](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Models-blue)]()
+[![Hugging Face Models](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Models-blue)](https://huggingface.co/Meloo/ASSANet)
 [![download](https://img.shields.io/github/downloads/sunny2109/DSTNet-plus/total.svg)]()
 ![visitors](https://visitor-badge.laobi.icu/badge?page_id=sunny2109/ASSANet) 
 
@@ -10,8 +10,8 @@
 ---
 
 
-
 ## 📜 News
+- **2026.03.09**: All pretrained models and visual results are available.
 - **2026.02.25**: Our ASSANet is accepted by TPAMI.
 - **2026.02.10**: This repo is created.
 
@@ -32,7 +32,7 @@ and then employs a sparse self-attention mechanism to adaptively select the most
 
 
 ## 🚀 Quick Started
-<!-- ### 1. Environment Set Up
+### 1. Environment Set Up
 > - Python 3.8, PyTorch >= 1.11
 > - BasicSR 1.4.2
 > - Platforms: Ubuntu 18.04, cuda-11
@@ -40,8 +40,8 @@ and then employs a sparse self-attention mechanism to adaptively select the most
 ```bash
 git clone https://github.com/sunny2109/RDG.git
 cd RDG
-conda create -n rdg python=3.8
-conda activate rdg
+conda create -n ASSANet python=3.8
+conda activate ASSANet
 # Install dependent packages
 pip install -r requirements.txt
 # Install BasicSR
@@ -50,26 +50,31 @@ python setup.py develop
 
 ### 2. Run the training code
 ```
-# train RDG for x4 effieicnt SR
-python basicsr/train.py -opt options/train/train_RDG_x4.yml
+# train ASSANet for x4 lightweight SR
+python basicsr/train.py -opt options/train/sr/ASSANet_S/train_ASSANet_x4.yml
+# train ASSANet for denoising
+python basicsr/train.py -opt options/test/denoising/test_ASSANet_denoising_50.yml
 ```
 
 ### 3. Quick inference
 - Download the pretrained models.
 
-Please download the pretrained [model weights](https://github.com/sunny2109/RDG/tree/main/checkpoints) and put it in `./checkpoints/`.
+Please download the pretrained [model weights]https://huggingface.co/Meloo/ASSANet/tree/main/pretrained_models) and put it in `./experiments/pretrained_models`.
 - Download the testing dataset.
 
-Please download the test dataset from [Baidu Cloud](https://pan.baidu.com/s/1v7-0KaXdTPDMaO_wfBQkhg?pwd=RRDG) and put it in `./datasets/`.
+Please download the test dataset and put it in `./datasets/`.
 - Run the following commands:
 ```
-python basicsr/test.py -opt options/test/test_RDG_x4.yml
+# test ASSANet for x4 lightweight SR
+python basicsr/test.py -opt options/test/sr/test_ASSANet_x4_S.yml
+# test ASSANet for color image denosing
+python basicsr/test.py -opt options/test/denoising/test_ASSANet_denoising_50.yml
 ```
-- The test results will be in './results'. -->
+- The test results will be in './results'.
 
 
 ## ✨ Results
-We achieve SOTA performance on a set of restoration datasets. Detailed results can be found in the paper. All visual results of ASSANet can be downloaded [here]().
+We achieve SOTA performance on a set of restoration datasets. Detailed results can be found in the paper. All visual results of ASSANet can be downloaded [here](https://huggingface.co/Meloo/ASSANet/visual_results).
 
 - **Classical image SR**
 <p align="center">
@@ -97,13 +102,13 @@ We achieve SOTA performance on a set of restoration datasets. Detailed results c
 If you have any questions, please feel free to reach us out at cs.longsun@gmail.com
 
 
-<!-- ## 📎 Citation
+## 📎 Citation
 
 If you find our work helpful for your research, please consider giving a star ⭐ and citation 📝
 ```bibtex
-@InProceedings{RDG,
-  title={Efficient Video Super-Resolution for Real-time Rendering with Decoupled G-buffer Guidance},
-  author={Zheng, Mingjun and Sun, Long and Dong, Jiangxin and Pan, Jinshan},
-  booktitle={CVPR},
-  year={2025}
-} -->
+@article{ASSANet,
+  title={Adaptive Sparse Self-Attention for Efficient Image Super-resolution and Beyond},
+  author={Pan, Jinshan and Sun, Long and Song, Lianhong and Dong, Jiangxin and Yang, Jian and Zhao, Maocheng, and Tang, Jinhui},
+  journal={TPAMI},
+  year={2026}
+}

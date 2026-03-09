@@ -1,0 +1,72 @@
+name: test_ASSANet_jpeg_40
+model_type: SRModel
+scale: 1
+num_gpu: auto
+manual_seed: 0
+
+# dataset and data loader settings
+datasets:
+
+  val_0:
+    task: CAR
+    name: Classic5
+    type: DatasetJPEG
+    dataroot_gt: /data2/songlianhong/CAR/classic5/Classic5_HQ
+    dataroot_lq: ~
+    io_backend:
+      type: disk
+    quality_factor: 40
+    quality_factor_test: 40
+
+  val_1:
+    task: CAR
+    name: LIVE1
+    type: DatasetJPEG
+    dataroot_gt: /data2/songlianhong/CAR/LIVE1/LIVE1_HQ
+    dataroot_lq: ~
+    io_backend:
+      type: disk
+    quality_factor: 40
+    quality_factor_test: 40
+
+# network structures
+network_g:
+  type: ASSANet
+  in_chans: 1
+  dim: 160
+  num_blocks: 8
+  num_layers: 8
+  upscale: 1
+  num_heads: 1
+  ffn_expansion_factor: 2.0
+  img_range: 1.
+  use_pixelunshuffle: True
+  tlc_flag: True
+  tlc_kernel: 72
+  activation: 'relu'
+
+# path
+path:
+  pretrain_network_g: experiments/pretrained_models/JPEG/ASSANet_40.pth
+  strict_load_g: true
+  resume_state: ~
+
+# validation settings
+val:
+  save_img: false
+  suffix: ~  # add suffix to saved images, if None, use exp name
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 0
+      test_y_channel: false
+    ssim:
+      type: calculate_ssim
+      crop_border: 0
+      test_y_channel: false
+
+# dist training settings
+dist_params:
+  backend: nccl
+  port: 22144

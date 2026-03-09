@@ -1,0 +1,150 @@
+name: ASSANet_denoising_color_DFWB_25
+model_type: SRModel
+scale: 1
+num_gpu: auto # 8
+manual_seed: 0
+
+# dataset and data loader settings
+datasets:
+  train:
+    name: DFWB
+    type: DatasetDnCNN
+    dataroot_gt: /data2/songlianhong/DFWB_RGB/DFWB_RGB/HQ
+    dataroot_lq: ~
+    meta_info_file: basicsr/data/meta_info/meta_info_DFWB_GT.txt
+    filename_tmpl: '{}'
+    io_backend:
+      type: disk
+
+    gt_size: 144
+    sigma: 25
+    sigma_test: 25
+
+    use_hflip: true
+    use_rot: true
+
+    # data loader
+    use_shuffle: true
+    num_worker_per_gpu: 8
+    batch_size_per_gpu: 2
+    dataset_enlarge_ratio: 100
+    prefetch_mode: ~
+
+  # --- validation
+  val_0:
+    name: Kodak24
+    type: DatasetDnCNN
+    dataroot_gt: /data2/songlianhong/Color_denoise/Kodak24
+    dataroot_lq: ~
+    io_backend:
+      type: disk
+
+    sigma: 25
+    sigma_test: 25
+
+  val_1:
+    name: CBSD68
+    type: DatasetDnCNN
+    dataroot_gt: /data2/songlianhong/Color_denoise/CBSD68
+    dataroot_lq: ~
+    io_backend:
+      type: disk
+
+    sigma: 25
+    sigma_test: 25
+
+  val_2:
+    name: McMaster
+    type: DatasetDnCNN
+    dataroot_gt: /data2/songlianhong/Color_denoise/McMaster
+    dataroot_lq: ~
+    io_backend:
+      type: disk
+
+    sigma: 25
+    sigma_test: 25
+
+  val_3:
+    name: Urban100
+    type: DatasetDnCNN
+    dataroot_gt: /data2/songlianhong/Color_denoise/Urban100
+    dataroot_lq: ~
+    io_backend:
+      type: disk
+
+    sigma: 25
+    sigma_test: 25
+
+
+# network structures
+network_g:
+  type: ASSANet
+  dim: 160
+  num_blocks: 8
+  num_layers: 8
+  upscale: 1
+  num_heads: 1
+  ffn_expansion_factor: 2.0
+  img_range: 1.
+  use_pixelunshuffle: True
+  tlc_flag: True
+  tlc_kernel: 72
+  activation: 'relu'
+
+# path
+path:
+  pretrain_network_g: experiments/ASSANet_denoising_color_25_DFWB/models/net_g_300000.pth
+  strict_load_g: true
+  resume_state: ~
+
+# all the training settings are based on SwinIR except for learning rate
+# training settings
+train:
+  ema_decay: 0.999
+  optim_g:
+    type: Adam
+    lr: !!float 5e-4
+    weight_decay: 0
+    betas: [0.9, 0.99]
+
+  scheduler:
+    type: MultiStepLR
+    milestones: [250000, 400000, 450000, 475000]
+    gamma: 0.5
+
+  total_iter: 500000
+  warmup_iter: -1  # no warm up
+  use_grad_clip: True
+
+  # losses
+  pixel_opt:
+    type: L1Loss
+    loss_weight: 1.0
+    reduction: mean
+
+  fft_opt:
+    type: FFTLoss
+    loss_weight: 0.05
+    reduction: mean
+
+# validation settings
+val:
+  val_freq: !!float 1e4
+  save_img: false
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 0
+      test_y_channel: false
+
+# logging settings
+logger:
+  print_freq: 500
+  save_checkpoint_freq: !!float 5e3
+  use_tb_logger: true
+
+# dist training settings
+dist_params:
+  backend: nccl
+  port: 29500
