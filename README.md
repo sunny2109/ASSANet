@@ -38,8 +38,8 @@ and then employs a sparse self-attention mechanism to adaptively select the most
 > - Platforms: Ubuntu 18.04, cuda-11
 
 ```bash
-git clone https://github.com/sunny2109/RDG.git
-cd RDG
+git clone https://github.com/sunny2109/ASSANet.git
+cd ASSANet
 conda create -n ASSANet python=3.8
 conda activate ASSANet
 # Install dependent packages
